@@ -1,7 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Person } from '../../types';
-import { Link } from 'react-router-dom';
 import cn from 'classnames';
+import { PersonLink } from '../PersonLink/PersonLink';
 
 interface Props {
   person: Person;
@@ -9,12 +9,11 @@ interface Props {
 
 export const PersonItem: React.FC<Props> = ({ person }) => {
   const { personSlug } = useParams();
-  const selectedPerson = personSlug ? personSlug : null;
+  const selectedPerson = personSlug ?? null;
 
   return (
     <tr
       data-cy="person"
-      key={person.slug}
       className={cn({
         'has-background-warning': person.slug === selectedPerson,
       })}
@@ -23,15 +22,29 @@ export const PersonItem: React.FC<Props> = ({ person }) => {
         {person.slug === selectedPerson ? (
           <Link to="/people">{person.name}</Link>
         ) : (
-          <Link to={`/people/${person.slug}`}>{person.name}</Link>
+          <PersonLink name={person.name} slug={person.slug} sex={person.sex} />
         )}
       </td>
 
       <td>{person.sex}</td>
       <td>{person.born}</td>
       <td>{person.died}</td>
-      <td>{person.motherName}</td>
-      <td>{person.fatherName}</td>
+
+      <td>
+        <PersonLink
+          name={person.motherName}
+          slug={person.mother?.slug ?? null}
+          sex="f"
+        />
+      </td>
+
+      <td>
+        <PersonLink
+          name={person.fatherName}
+          slug={person.father?.slug ?? null}
+          sex="m"
+        />
+      </td>
     </tr>
   );
 };
